@@ -1,0 +1,405 @@
+'use client'
+
+import { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// --- Main Component ---
+export default function Home() {
+  const [userInput, setUserInput] = useState<string>('');
+  const [itinerary, setItinerary] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Auto-scroll as content streams in
+    if (itinerary && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }, [itinerary]);
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!userInput.trim() || isLoading) return;
+
+    setIsLoading(true);
+    setError(null);
+    setItinerary('');
+    setIsTyping(false);
+
+    try {
+      const response = await fetch('/api/generate-trip', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userInput: userInput.trim() }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Connection error occurred');
+      }
+
+      const data = await response.json();
+      setItinerary(data.itinerary);
+      setIsTyping(true);
+
+      // Simulate typing effect
+      setTimeout(() => setIsTyping(false), 1000);
+
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const clearForm = () => {
+    setUserInput('');
+    setItinerary('');
+    setError(null);
+    setIsTyping(false);
+  };
+
+  // --- JSX Structure ---
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 text-gray-900 relative overflow-x-hidden">
+      <GeometricBackground />
+      
+      <main className="relative z-10 container mx-auto px-4 py-12 max-w-5xl">
+        <Header />
+        
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <ItineraryForm
+            userInput={userInput}
+            setUserInput={setUserInput}
+            handleSubmit={handleSubmit}
+            isLoading={isLoading}
+            itinerary={itinerary}
+            clearForm={clearForm}
+          />
+        </motion.div>
+
+        <AnimatePresence>
+          {error && <ErrorDisplay error={error} />}
+          {itinerary && <ItineraryDisplay itinerary={itinerary} resultRef={resultRef} clearForm={clearForm} isTyping={isTyping} />}
+        </AnimatePresence>
+
+        <Footer />
+      </main>
+    </div>
+  );
+}
+
+// --- Sub-components for better organization ---
+
+const GeometricBackground = () => (
+  <div className="absolute inset-0 overflow-hidden z-0">
+    <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-indigo-300/30 rounded-full blur-3xl"></div>
+    <div className="absolute top-1/4 right-0 w-80 h-80 bg-gradient-to-bl from-purple-200/30 to-pink-300/30 rounded-full blur-3xl"></div>
+    <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-gradient-to-tr from-cyan-200/30 to-blue-300/30 rounded-full blur-3xl"></div>
+    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-200/20 to-teal-300/20 rounded-full blur-3xl"></div>
+  </div>
+);
+
+const Header = () => (
+  <div className="text-center mb-16">
+    <motion.div 
+      initial={{ scale: 0, rotate: -180 }} 
+      animate={{ scale: 1, rotate: 0 }} 
+      transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.2 }}
+      className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl mb-8 shadow-xl relative"
+    >
+      <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </motion.div>
+    
+    <div className="space-y-6">
+      <motion.h1 
+        initial={{ opacity: 0, y: -30 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.7, delay: 0.3 }}
+        className="text-5xl md:text-6xl font-black bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent leading-tight"
+      >
+        Travel Planner AI
+      </motion.h1>
+      <motion.p 
+        initial={{ opacity: 0, y: 30 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.7, delay: 0.5 }}
+        className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium"
+      >
+        Tell us your travel style and let AI create your perfect worldwide itinerary
+      </motion.p>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 0.7 }}
+        className="flex justify-center space-x-6 text-gray-400"
+      >
+        <div className="flex items-center space-x-2">
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+          </svg>
+          <span className="text-sm font-medium">Destinations</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+          </svg>
+          <span className="text-sm font-medium">Schedules</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+          </svg>
+          <span className="text-sm font-medium">Budget</span>
+        </div>
+      </motion.div>
+    </div>
+  </div>
+);
+
+const ItineraryForm = ({ userInput, setUserInput, handleSubmit, isLoading, itinerary, clearForm }: any) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, delay: 0.2 }}
+    className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-10 mb-12 relative overflow-hidden border border-white/20"
+  >
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-white/50 to-indigo-50/50 rounded-3xl"></div>
+    <div className="relative z-10">
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="mb-6"
+      >
+        <label htmlFor="userInput" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+          <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+          </svg>
+          Tell us about your dream trip
+        </label>
+      </motion.div>
+      
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="relative">
+          <textarea
+            id="userInput"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            className="w-full p-6 bg-white/70 backdrop-blur-sm rounded-2xl shadow-inner focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400/50 transition-all duration-300 resize-none text-lg text-gray-800 placeholder-gray-500 border border-gray-200/50 focus:outline-none"
+            rows={6}
+            placeholder="Example: Family trip for 5 days in Paris, focusing on art museums, local cuisine, and cultural experiences. Include budget, preferred activities, or special requirements!"
+            disabled={isLoading}
+          />
+          <div className="absolute bottom-3 right-3 text-xs text-gray-400">
+            {userInput.length}/500
+          </div>
+        </div>
+        
+        <div className="flex flex-col sm:flex-row gap-4">
+          <motion.button
+            type="submit"
+            disabled={isLoading || !userInput.trim()}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="flex-1 px-8 py-4 font-bold text-white bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-xl shadow-lg hover:shadow-2xl disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300 text-lg group relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-700 via-indigo-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <span className="relative z-10 flex items-center justify-center">
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3"></div>
+                  <span>Creating your itinerary...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  Generate Itinerary
+                </>
+              )}
+            </span>
+          </motion.button>
+          
+          {itinerary && !isLoading && (
+            <motion.button
+              type="button" 
+              onClick={clearForm}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="px-8 py-4 font-bold text-gray-600 bg-white/60 backdrop-blur-sm rounded-xl hover:bg-white/80 transition-all duration-300 border border-gray-200/50 hover:border-gray-300/50"
+            >
+              <span className="flex items-center justify-center">
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Start Over
+              </span>
+            </motion.button>
+          )}
+        </div>
+      </form>
+    </div>
+  </motion.div>
+);
+
+const ErrorDisplay = ({ error }: { error: string }) => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }} 
+    animate={{ opacity: 1, y: 0 }} 
+    exit={{ opacity: 0, y: -20 }}
+    className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-12 shadow-lg"
+  >
+    <div className="flex items-center">
+      <svg className="w-6 h-6 text-red-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <div>
+        <h3 className="text-lg font-bold text-red-800">Error occurred</h3>
+        <p className="text-red-700">{error}</p>
+      </div>
+    </div>
+  </motion.div>
+);
+
+const ItineraryDisplay = ({ itinerary, resultRef, clearForm, isTyping }: any) => (
+  <motion.div
+    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+    animate={{ opacity: 1, scale: 1, y: 0 }}
+    transition={{ duration: 0.7, type: 'spring', stiffness: 100 }}
+    className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-10 relative overflow-hidden border border-white/20"
+    ref={resultRef}
+  >
+    <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 via-blue-50/50 to-indigo-50/50 rounded-3xl"></div>
+    <div className="relative z-10">
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="flex items-center justify-between mb-8"
+      >
+        <h2 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+          Your Travel Itinerary
+        </h2>
+        <motion.div 
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.3, delay: 0.4 }}
+          className="text-xs text-blue-600 bg-blue-50 px-4 py-2 rounded-full font-bold border border-blue-200"
+        >
+          AI Generated
+        </motion.div>
+      </motion.div>
+      
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+        className="prose-enhanced prose-lg max-w-none"
+      >
+        <ReactMarkdown>{itinerary}</ReactMarkdown>
+        {isTyping && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="inline-block w-2 h-6 bg-blue-500 ml-1 animate-pulse"
+          />
+        )}
+      </motion.div>
+      
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.6 }}
+        className="mt-8 pt-6 border-t border-gray-200 text-center"
+      >
+        <p className="text-gray-600 mb-4">Want to customize your itinerary? Try adding more details and generate a new one!</p>
+        <div className="flex justify-center space-x-4">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-semibold shadow-lg"
+          >
+            <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+            Back to Top
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={clearForm}
+            className="px-6 py-3 bg-white/60 backdrop-blur-sm text-gray-700 rounded-lg hover:bg-white/80 transition-all duration-300 font-semibold border border-gray-200 hover:border-gray-300"
+          >
+            <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Create New
+          </motion.button>
+        </div>
+      </motion.div>
+    </div>
+  </motion.div>
+);
+
+const Footer = () => (
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, delay: 0.8 }}
+    className="text-center mt-20"
+  >
+    <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-8 max-w-md mx-auto border border-white/20">
+      <motion.p 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 1 }}
+        className="text-xl font-bold text-gray-800 mb-2"
+      >
+        Made with passion by Travel Planner AI
+      </motion.p>
+      <motion.p 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 1.2 }}
+        className="text-gray-600 text-sm"
+      >
+        Using AI to create the best travel experiences
+      </motion.p>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, delay: 1.4 }}
+        className="flex justify-center space-x-6 mt-4 text-gray-400"
+      >
+        <div className="flex items-center space-x-2">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+          </svg>
+          <span className="text-xs font-medium">Explore</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+          </svg>
+          <span className="text-xs font-medium">Plan</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+          </svg>
+          <span className="text-xs font-medium">Discover</span>
+        </div>
+      </motion.div>
+    </div>
+  </motion.div>
+);
