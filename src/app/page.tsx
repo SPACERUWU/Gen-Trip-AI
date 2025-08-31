@@ -165,16 +165,16 @@ export default function Home() {
     ];
 
     return checklist.map((item, index) => (
-      <div key={index} className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded">
+      <div key={index} className="flex items-center space-x-3 p-2 hover:bg-gray-50 dark:hover:bg-gray-600 rounded">
         <input type="checkbox" id={`check-${index}`} className="w-4 h-4 text-blue-600" />
-        <label htmlFor={`check-${index}`} className="text-gray-700">{item}</label>
+        <label htmlFor={`check-${index}`} className="text-gray-700 dark:text-gray-300">{item}</label>
       </div>
     ));
   };
 
   // --- JSX Structure ---
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 text-gray-900 relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900 text-gray-900 dark:text-white relative overflow-x-hidden">
       <DarkModeToggle />
       <GeometricBackground />
       
@@ -223,10 +223,10 @@ export default function Home() {
 
 const GeometricBackground = () => (
   <div className="absolute inset-0 overflow-hidden z-0">
-    <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-indigo-300/30 rounded-full blur-3xl"></div>
-    <div className="absolute top-1/4 right-0 w-80 h-80 bg-gradient-to-bl from-purple-200/30 to-pink-300/30 rounded-full blur-3xl"></div>
-    <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-gradient-to-tr from-cyan-200/30 to-blue-300/30 rounded-full blur-3xl"></div>
-    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-200/20 to-teal-300/20 rounded-full blur-3xl"></div>
+    <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-200/30 to-indigo-300/30 dark:from-blue-500/20 dark:to-indigo-600/20 rounded-full blur-3xl"></div>
+    <div className="absolute top-1/4 right-0 w-80 h-80 bg-gradient-to-bl from-purple-200/30 to-pink-300/30 dark:from-purple-500/20 dark:to-pink-600/20 rounded-full blur-3xl"></div>
+    <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-gradient-to-tr from-cyan-200/30 to-blue-300/30 dark:from-cyan-500/20 dark:to-blue-600/20 rounded-full blur-3xl"></div>
+    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-emerald-200/20 to-teal-300/20 dark:from-emerald-500/15 dark:to-teal-600/15 rounded-full blur-3xl"></div>
   </div>
 );
 
@@ -248,7 +248,7 @@ const Header = () => (
         initial={{ opacity: 0, y: -30 }} 
         animate={{ opacity: 1, y: 0 }} 
         transition={{ duration: 0.7, delay: 0.3 }}
-        className="text-5xl md:text-6xl font-black bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent leading-tight"
+        className="text-5xl md:text-6xl font-black bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-300 dark:to-indigo-300 bg-clip-text text-transparent leading-tight"
       >
         Travel Planner AI
       </motion.h1>
@@ -256,7 +256,7 @@ const Header = () => (
         initial={{ opacity: 0, y: 30 }} 
         animate={{ opacity: 1, y: 0 }} 
         transition={{ duration: 0.7, delay: 0.5 }}
-        className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium"
+        className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed font-medium"
       >
         Tell us your travel style and let AI create your perfect worldwide itinerary
       </motion.p>
@@ -264,7 +264,7 @@ const Header = () => (
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 0.7 }}
-        className="flex justify-center space-x-6 text-gray-400"
+        className="flex justify-center space-x-6 text-gray-400 dark:text-gray-500"
       >
         <div className="flex items-center space-x-2">
           <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -330,9 +330,9 @@ const ItineraryForm = ({
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.6, delay: 0.2 }}
-    className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-10 mb-12 relative overflow-hidden border border-white/20"
+    className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-10 mb-12 relative overflow-hidden border border-white/20 dark:border-gray-700/20"
   >
-    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-white/50 to-indigo-50/50 rounded-3xl"></div>
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-white/50 to-indigo-50/50 dark:from-blue-900/20 dark:via-gray-800/20 dark:to-indigo-900/20 rounded-3xl"></div>
     <div className="relative z-10">
       <div className="flex justify-between items-center mb-6">
         <motion.div 
@@ -340,7 +340,7 @@ const ItineraryForm = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <label htmlFor="userInput" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+          <label htmlFor="userInput" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center">
             <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
@@ -353,7 +353,7 @@ const ItineraryForm = ({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             onClick={() => setShowSaved(!showSaved)}
-            className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-all duration-300 text-sm font-medium flex items-center"
+            className="px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all duration-300 text-sm font-medium flex items-center"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -368,15 +368,15 @@ const ItineraryForm = ({
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
-          className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200"
+          className="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600"
         >
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Saved Itineraries</h3>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">Saved Itineraries</h3>
           <div className="space-y-2 max-h-60 overflow-y-auto">
             {savedItineraries.map((item) => (
-              <div key={item.id} className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-800">{item.title}</h4>
-                  <p className="text-sm text-gray-500">{new Date(item.createdAt).toLocaleDateString()}</p>
+                              <div key={item.id} className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-800 dark:text-gray-200">{item.title}</h4>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{new Date(item.createdAt).toLocaleDateString()}</p>
                 </div>
                 <div className="flex space-x-2">
                   <button
@@ -404,12 +404,12 @@ const ItineraryForm = ({
             id="userInput"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
-            className="w-full p-6 bg-white/70 backdrop-blur-sm rounded-2xl shadow-inner focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400/50 transition-all duration-300 resize-none text-lg text-gray-800 placeholder-gray-500 border border-gray-200/50 focus:outline-none"
+            className="w-full p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl shadow-inner focus:ring-4 focus:ring-blue-500/30 focus:border-blue-400/50 transition-all duration-300 resize-none text-lg text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 border border-gray-200/50 dark:border-gray-600/50 focus:outline-none"
             rows={6}
             placeholder="Example: Family trip for 5 days in Paris, focusing on art museums, local cuisine, and cultural experiences. Include budget, preferred activities, or special requirements!"
             disabled={isLoading}
           />
-          <div className="absolute bottom-3 right-3 text-xs text-gray-400">
+          <div className="absolute bottom-3 right-3 text-xs text-gray-400 dark:text-gray-500">
             {userInput.length}/500
           </div>
         </div>
@@ -448,7 +448,7 @@ const ItineraryForm = ({
               animate={{ opacity: 1, x: 0 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="px-8 py-4 font-bold text-gray-600 bg-white/60 backdrop-blur-sm rounded-xl hover:bg-white/80 transition-all duration-300 border border-gray-200/50 hover:border-gray-300/50"
+              className="px-8 py-4 font-bold text-gray-600 dark:text-gray-300 bg-white/60 dark:bg-gray-700/60 backdrop-blur-sm rounded-xl hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-300 border border-gray-200/50 dark:border-gray-600/50 hover:border-gray-300/50 dark:hover:border-gray-500/50"
             >
               <span className="flex items-center justify-center">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -469,15 +469,15 @@ const ErrorDisplay = ({ error }: { error: string }) => (
     initial={{ opacity: 0, y: 20 }} 
     animate={{ opacity: 1, y: 0 }} 
     exit={{ opacity: 0, y: -20 }}
-    className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-12 shadow-lg"
+    className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-6 mb-12 shadow-lg"
   >
     <div className="flex items-center">
       <svg className="w-6 h-6 text-red-500 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
       <div>
-        <h3 className="text-lg font-bold text-red-800">Error occurred</h3>
-        <p className="text-red-700">{error}</p>
+        <h3 className="text-lg font-bold text-red-800 dark:text-red-200">Error occurred</h3>
+        <p className="text-red-700 dark:text-red-300">{error}</p>
       </div>
     </div>
   </motion.div>
@@ -509,10 +509,10 @@ const ItineraryDisplay = ({
       initial={{ opacity: 0, scale: 0.95, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ duration: 0.7, type: 'spring', stiffness: 100 }}
-      className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-10 relative overflow-hidden border border-white/20"
+      className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 md:p-10 relative overflow-hidden border border-white/20 dark:border-gray-700/20"
       ref={resultRef}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 via-blue-50/50 to-indigo-50/50 rounded-3xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 via-blue-50/50 to-indigo-50/50 dark:from-green-900/20 dark:via-blue-900/20 dark:to-indigo-900/20 rounded-3xl"></div>
       <div className="relative z-10">
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
@@ -520,14 +520,14 @@ const ItineraryDisplay = ({
           transition={{ duration: 0.5, delay: 0.2 }}
           className="flex items-center justify-between mb-8"
         >
-          <h2 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+          <h2 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-300 dark:to-indigo-300 bg-clip-text text-transparent">
             Your Travel Itinerary
           </h2>
           <motion.div 
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ duration: 0.3, delay: 0.4 }}
-            className="text-xs text-blue-600 bg-blue-50 px-4 py-2 rounded-full font-bold border border-blue-200"
+            className="text-xs text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-900/30 px-4 py-2 rounded-full font-bold border border-blue-200 dark:border-blue-700"
           >
             AI Generated
           </motion.div>
@@ -554,9 +554,9 @@ const ItineraryDisplay = ({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-8 p-6 bg-gray-50 rounded-xl border border-gray-200"
+            className="mt-8 p-6 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600"
           >
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Travel Checklist</h3>
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">Travel Checklist</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {generateChecklist()}
             </div>
@@ -567,9 +567,9 @@ const ItineraryDisplay = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-8 pt-6 border-t border-gray-200 text-center"
+          className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 text-center"
         >
-          <p className="text-gray-600 mb-4">Want to customize your itinerary? Try adding more details and generate a new one!</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">Want to customize your itinerary? Try adding more details and generate a new one!</p>
           <div className="flex flex-wrap justify-center gap-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -623,7 +623,7 @@ const ItineraryDisplay = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={clearForm}
-              className="px-6 py-3 bg-white/60 backdrop-blur-sm text-gray-700 rounded-lg hover:bg-white/80 transition-all duration-300 font-semibold border border-gray-200 hover:border-gray-300 flex items-center"
+              className="px-6 py-3 bg-white/60 dark:bg-gray-700/60 backdrop-blur-sm text-gray-700 dark:text-gray-300 rounded-lg hover:bg-white/80 dark:hover:bg-gray-700/80 transition-all duration-300 font-semibold border border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 flex items-center"
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -644,12 +644,12 @@ const Footer = () => (
     transition={{ duration: 0.6, delay: 0.8 }}
     className="text-center mt-20"
   >
-    <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-8 max-w-md mx-auto border border-white/20">
+    <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl rounded-2xl p-8 max-w-md mx-auto border border-white/20 dark:border-gray-700/20">
       <motion.p 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1 }}
-        className="text-xl font-bold text-gray-800 mb-2"
+        className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2"
       >
         Made with passion by Travel Planner AI
       </motion.p>
@@ -657,7 +657,7 @@ const Footer = () => (
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1.2 }}
-        className="text-gray-600 text-sm"
+        className="text-gray-600 dark:text-gray-400 text-sm"
       >
         Using AI to create the best travel experiences
       </motion.p>
@@ -665,7 +665,7 @@ const Footer = () => (
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, delay: 1.4 }}
-        className="flex justify-center space-x-6 mt-4 text-gray-400"
+        className="flex justify-center space-x-6 mt-4 text-gray-400 dark:text-gray-500"
       >
         <div className="flex items-center space-x-2">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
